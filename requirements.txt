@@ -7,4 +7,4 @@ accelerate
 pdfminer.six
 sentence_transformers
 chromadb
-bitsandbytes[gpu]
+bitsandbytes==0.41.1
