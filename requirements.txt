@@ -9,3 +9,4 @@ bitsandbytes
 pdfminer.six
 sentence_transformers
 chromadb
+sqlite3 >= 3.35.0
