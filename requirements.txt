@@ -8,4 +8,4 @@ accelerate
 pdfminer.six
 sentence_transformers
 chromadb
-sqlite3 >= 3.35.0
+bitsandbytes
