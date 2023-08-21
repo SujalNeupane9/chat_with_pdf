@@ -5,7 +5,6 @@ requests
 torch
 einops
 accelerate
-bitsandbytes
 pdfminer.six
 sentence_transformers
 chromadb
