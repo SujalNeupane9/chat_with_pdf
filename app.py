@@ -1,5 +1,6 @@
 import os
 import streamlit as st
+from io import BytesIO
 from chromadb.config import Settings
 from langchain.document_loaders import PyPDFLoader, DirectoryLoader, PDFMinerLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -41,11 +42,11 @@ def llm_pipeline():
     return local_llm
 
 
-def qa_llm(pdf_path):
+def qa_llm(pdf_file):
     llm = llm_pipeline()
     embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
     # Load the PDF file using PyPDFLoader
-    doc_loader = PyPDFLoader(pdf_path)
+    doc_loader = PyPDFLoader(pdf_file)
     # Split the text into sentences using RecursiveCharacterTextSplitter
     text_splitter = RecursiveCharacterTextSplitter()
     sentences = text_splitter.split_text(doc_loader.load())
@@ -57,36 +58,26 @@ def qa_llm(pdf_path):
     return qa
 
 
-def process_answer(instruction, pdf_path):
-    response = ''
-    instruction = instruction
-    qa = qa_llm(pdf_path)
-    generated_text = qa(instruction)
-    answer = generated_text['result']
-    return answer
-
-
 def main():
-    st.set_page_config(page_title="Search Your PDF 🐦📄", page_icon="🔍")
-    st.title("Search Your PDF 🐦📄")
-    with st.expander("About the App"):
-        st.markdown(
-            """
-            This is a Generative AI powered Question and Answering app that responds to questions about your PDF File.
-            """
-        )
-    pdf_path = st.file_uploader("Upload a PDF file", type="pdf")
-    if pdf_path is not None:
-        question = st.text_area("Enter your Question")
-        if st.button("Ask"):
-            st.info("Your Question: " + question)
-            st.info("Your Answer")
-            try:
-                answer = process_answer(question, pdf_path)
-                st.write(answer)
-            except Exception as e:
-                st.error(str(e))
+    st.title("PDF Question Answering")
+    st.write("Upload a PDF file and ask a question about its contents.")
+    
+    # Create a file uploader widget
+    uploaded_file = st.file_uploader("Upload a PDF file", type=["pdf"])
+    
+    if uploaded_file is not None:
+        # Read the contents of the uploaded file into a BytesIO object
+        pdf_bytes = BytesIO(uploaded_file.read())
+        
+        # Call the qa_llm function with the BytesIO object as the argument
+        qa_result = qa_llm(pdf_bytes)
+        
+        # Display the question and answer results
+        for result in qa_result:
+            st.write(f"Question: {result['question']}")
+            st.write(f"Answer: {result['answer']}")
+            st.write("-----")
 
 
 if __name__ == "__main__":
-  main()
+    main()
