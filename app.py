@@ -22,8 +22,7 @@ check_point = 'MBZUAI/LaMini-T5-738M'
 tokenizer = AutoTokenizer.from_pretrained(check_point)
 model = AutoModelForSeq2SeqLM.from_pretrained(
     check_point,
-    device_map='auto',
-    torch_dtype=torch.float32
+    device_map='auto'
 )
 
 
