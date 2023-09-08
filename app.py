@@ -1,6 +1,6 @@
-
 import os
 import streamlit as st
+from tempfile import NamedTemporaryFile
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, pipeline
 from langchain.document_loaders import PyPDFLoader
 from langchain.vectorstores import Chroma
@@ -13,14 +13,19 @@ def main():
     pdf_file = st.file_uploader("Upload a PDF file", type="pdf")
 
     if pdf_file is not None:
-        # Load PDF file using Langchain
-        loader = PyPDFLoader(pdf_file)
-        docs = loader.load_and_split()
-        embeddings = SentenceTransformerEmbeddings()
+        # Save PDF file to temporary directory
+        with NamedTemporaryFile(delete=False) as tmp_file:
+            tmp_file.write(pdf_file.read())
+            tmp_file.flush()
 
-        # Create Chroma database from documents
-        db = Chroma.from_documents(docs, embeddings, persist_directory='.')
-        db.persist()
+            # Load PDF file using Langchain
+            loader = PyPDFLoader(tmp_file.name)
+            docs = loader.load_and_split()
+            embeddings = SentenceTransformerEmbeddings()
+
+            # Create Chroma database from documents
+            db = Chroma.from_documents(docs, embeddings, persist_directory='.')
+            db.persist()
 
         # Load T5 model and tokenizer
         checkpoint = 'MBZUAI/LaMini-T5-738M'
