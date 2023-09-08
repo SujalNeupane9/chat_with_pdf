@@ -3,3 +3,8 @@ PyPDF2>=1.26.0
 langchain
 transformers>=4.9.2
 torch
+chromadb
+pdfminer.six
+sentence-transformers
+pypdf
+accelerate
