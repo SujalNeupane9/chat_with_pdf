@@ -8,3 +8,4 @@ pdfminer.six
 sentence-transformers
 pypdf
 accelerate
+sqlite3 >= 3.35.0
